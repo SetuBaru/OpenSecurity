@@ -10,8 +10,8 @@ data_path = dataprep.data_path
 sample_dir = os.path.join(data_path, 'samples/')
 
 
-def head_tracking(cam=0, _record=True, _filename=f'sample{random.randint(9, 9999)}', _format='avi'
-                  , _output=sample_dir, _dimensions=(640, 480)):
+def head_tracking(cam=0, _record=True, _filename=f'sample{random.randint(9, 9999)}', _format='avi',
+                  _output=sample_dir, _dimensions=(640, 480)):
     # Initialize the mediapipe.solutions face_mesh object and call the FaceMesh Function
     mp_solutions = mp.solutions
     mp_face_mesh = mp_solutions.face_mesh
@@ -66,7 +66,7 @@ def head_tracking(cam=0, _record=True, _filename=f'sample{random.randint(9, 9999
                 # Get rotational matrix
                 rmat, jac = cv2.Rodrigues(rot_vec)
                 # Get angles
-                angles, mtxR, mtxQ, Qx, Qy, Qz = cv2.RQDecomp3x3(rmat)
+                angles, mtx_r, mtx_q, qx, qy, qz = cv2.RQDecomp3x3(rmat)
                 # Get the y rotation degree
                 x = angles[0] * 360
                 y = angles[1] * 360
@@ -93,8 +93,7 @@ def head_tracking(cam=0, _record=True, _filename=f'sample{random.randint(9, 9999
             hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
             # output the frame
             _out_.write(hsv)
-        else:
-            pass
+        _out_.release()
         # The original input frame is shown in  window
         cv2.imshow('Head Pose Estimation', image)
         # Wait for '5' key to stop the program
@@ -102,8 +101,6 @@ def head_tracking(cam=0, _record=True, _filename=f'sample{random.randint(9, 9999
             break
     # Close the window / Release webcam
     cap.release()
-    if _out_:
-        # After we release our webcam, we also release the output
-        _out_.release()
     # De-allocate associated memory usage
     cv2.destroyAllWindows()
+
