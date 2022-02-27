@@ -1,15 +1,10 @@
 import cv2
 import mediapipe as mp
 import numpy as np
-from utils import dataprep
 import random
 
-dataprep = dataprep.DataPrep()
-data_path = dataprep.data_path
-sample_dir = f'{data_path}/samples'
 
-
-def head_tracking(cam=0, _record=True, output_path=sample_dir, _filename=f'sample_{(random.randint(9, 9999))}',
+def head_tracking(cam=0, _record=True, output_path='samples', _filename=f'sample_{(random.randint(9, 9999))}',
                   _format='avi', _dimensions=(640, 480)):
     # Initialize the mediapipe.solutions face_mesh object and call the FaceMesh Function
     mp_solutions = mp.solutions
@@ -85,17 +80,17 @@ def head_tracking(cam=0, _record=True, output_path=sample_dir, _filename=f'sampl
                 cv2.line(image, p1, p2, (255, 0, 0), 2)
                 # Add the text on the image
                 cv2.putText(image, text, (20, 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-        # record the results
-        if _record is True:
-            # Converts to HSV color space, OCV reads colors as BGR (image is converted to hsv)
-            hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-            # output the frame
-            _out_.write(hsv)
-        # The original input frame is shown in  window
-        cv2.imshow('Head Pose Estimation', image)
-        # Wait for 'a' key to stop the program
-        if cv2.waitKey(1) & 0xFF == ord('a'):
-            break
+                # record the results
+                if _record is True:
+                    # Converts to HSV color space, OCV reads colors as BGR (image is converted to hsv)
+                    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+                    # output the frame
+                    _out_.write(hsv)
+                # The original input frame is shown in  window
+                cv2.imshow('Head Pose Estimation', image)
+                # Wait for 'a' key to stop the program
+                if cv2.waitKey(1) & 0xFF == ord('a'):
+                    break
     # Release webcam, release output, de-allocate memory.
     cap.release()
     _out_.release()
