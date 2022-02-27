@@ -2,16 +2,15 @@ import cv2
 import mediapipe as mp
 import numpy as np
 from utils import dataprep
-import os
 import random
 
 dataprep = dataprep.DataPrep()
 data_path = dataprep.data_path
-sample_dir = os.path.join(data_path, 'samples/')
+sample_dir = f'{data_path}/samples'
 
 
-def head_tracking(cam=0, _record=True, output_path=sample_dir, _filename=f'sample{random.randint(9, 9999)}'
-                  , _format='avi', _dimensions=(640, 480)):
+def head_tracking(cam=0, _record=True, output_path=sample_dir, _filename=f'sample_{(random.randint(9, 9999))}',
+                  _format='avi', _dimensions=(640, 480)):
     # Initialize the mediapipe.solutions face_mesh object and call the FaceMesh Function
     mp_solutions = mp.solutions
     mp_face_mesh = mp_solutions.face_mesh
@@ -19,7 +18,7 @@ def head_tracking(cam=0, _record=True, output_path=sample_dir, _filename=f'sampl
     # Access video feed from a selected webcam ,define a codec and create a VideoWriter object
     cap = cv2.VideoCapture(cam)
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    _out_ = cv2.VideoWriter(f'{_filename}.{_format}', fourcc, 20.0, _dimensions)
+    _out_ = cv2.VideoWriter(f"{output_path}/{_filename}.{_format}", fourcc, 20.0, _dimensions)
 
     # loop runs if capturing has been initialized.
     while cap.isOpened():
@@ -79,7 +78,6 @@ def head_tracking(cam=0, _record=True, output_path=sample_dir, _filename=f'sampl
                     text = "Looking Down"
                 else:
                     text = "Forward"
-
                 # Display the nose direction
                 nose_3d_projection, jacobian = cv2.projectPoints(nose_3d, rot_vec, trans_vec, cam_matrix, dist_matrix)
                 p1 = (int(nose_2d[0]), int(nose_2d[1]))
@@ -93,14 +91,12 @@ def head_tracking(cam=0, _record=True, output_path=sample_dir, _filename=f'sampl
             hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
             # output the frame
             _out_.write(hsv)
-        _out_.release()
         # The original input frame is shown in  window
         cv2.imshow('Head Pose Estimation', image)
-        # Wait for '5' key to stop the program
-        if cv2.waitKey(5) & 0xFF == 27:
+        # Wait for 'a' key to stop the program
+        if cv2.waitKey(1) & 0xFF == ord('a'):
             break
-    # Close the window / Release webcam
+    # Release webcam, release output, de-allocate memory.
     cap.release()
-    # De-allocate associated memory usage
+    _out_.release()
     cv2.destroyAllWindows()
-

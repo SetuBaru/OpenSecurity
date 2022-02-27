@@ -1,4 +1,5 @@
-from bin import pose_estimation as _pose
+from bin import pose_estimation as pose
 
-pose = _pose
-pose.head_tracking(0, True, pose.sample_dir, 'Test_Case1', 'avi')
+vid_writing = pose.head_tracking(cam=0, _record=True, _filename='TestOutput', _format='avi', _dimensions=(640, 480))
+
+print('Video Writing Complete')

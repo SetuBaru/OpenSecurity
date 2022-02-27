@@ -7,9 +7,9 @@ class DataPrep:
 
     def __init__(self):
         self.current_path = os.getcwd()
-        self.log_path = 'data/LOG.txt'
-        self.user_database = "vision/data/user-table.json"
-        self.data_path = 'OpenVision/data/'
+        self.data_path = f'{self.current_path}/data'
+        self.log_path = f'{self.data_path}/LOG.txt'
+        self.user_database = f'{self.data_path}/user-table.json'
         self.embedding_path = {}  # Create a log to store paths
         self.generated_encodings = []
         self.known_identities = []
