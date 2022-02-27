@@ -10,8 +10,8 @@ data_path = dataprep.data_path
 sample_dir = os.path.join(data_path, 'samples/')
 
 
-def head_tracking(cam=0, _record=True, _filename=f'sample{random.randint(9, 9999)}', _format='avi',
-                  _output=sample_dir, _dimensions=(640, 480)):
+def head_tracking(cam=0, _record=True, output_path=sample_dir, _filename=f'sample{random.randint(9, 9999)}'
+                  , _format='avi', _dimensions=(640, 480)):
     # Initialize the mediapipe.solutions face_mesh object and call the FaceMesh Function
     mp_solutions = mp.solutions
     mp_face_mesh = mp_solutions.face_mesh
