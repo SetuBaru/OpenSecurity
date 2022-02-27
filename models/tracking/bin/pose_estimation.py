@@ -1,26 +1,19 @@
-# This is a sample Python script.
-
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
-
-from cv2 import imshow, waitKey, projectPoints, line, solvePnP, Rodrigues, cvtColor, COLOR_BGR2RGB, COLOR_RGB2BGR, \
-    FONT_HERSHEY_SIMPLEX, RQDecomp3x3, putText, flip, VideoCapture
+import cv2
 import mediapipe as mp
 import numpy as np
 
 mp_face_mesh = mp.solutions.face_mesh
 face_mesh = mp_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence=0.5)
-cap = VideoCapture(0)
+cap = cv2.VideoCapture(0)
 
 while cap.isOpened():
     success, image = cap.read()
-
     # Flip the image horizontally for a later selfie-view display
     # Also convert the color space from BGR to RGB
-    image = cvtColor(flip(image, 1), COLOR_BGR2RGB)
+    image = cv2.cvtColor(cv2.flip(image, 1), cv2.COLOR_BGR2RGB)
 
     # To improve performance
-    image.flags.writeable = False
+    image.flags.writeable = True
 
     # Get the result
     results = face_mesh.process(image)
@@ -29,7 +22,7 @@ while cap.isOpened():
     image.flags.writeable = True
 
     # Convert the color space from RGB to BGR
-    image = cvtColor(image, COLOR_RGB2BGR)
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
     img_h, img_w, img_c = image.shape
     face_3d = []
@@ -68,13 +61,13 @@ while cap.isOpened():
             dist_matrix = np.zeros((4, 1), dtype=np.float64)
 
             # Solve PnP
-            success, rot_vec, trans_vec = solvePnP(face_3d, face_2d, cam_matrix, dist_matrix)
+            success, rot_vec, trans_vec = cv2.solvePnP(face_3d, face_2d, cam_matrix, dist_matrix)
 
             # Get rotational matrix
-            rmat, jac = Rodrigues(rot_vec)
+            rmat, jac = cv2.Rodrigues(rot_vec)
 
             # Get angles
-            angles, mtxR, mtxQ, Qx, Qy, Qz = RQDecomp3x3(rmat)
+            angles, mtxR, mtxQ, Qx, Qy, Qz = cv2.RQDecomp3x3(rmat)
 
             # Get the y rotation degree
             x = angles[0] * 360
@@ -82,7 +75,7 @@ while cap.isOpened():
 
             # print(y)
 
-            # See where the data's head tilting
+            # See where the user's head tilting
             if y < -10:
                 text = "Looking Left"
             elif y > 10:
@@ -93,25 +86,19 @@ while cap.isOpened():
                 text = "Forward"
 
             # Display the nose direction
-            nose_3d_projection, jacobian = projectPoints(nose_3d, rot_vec, trans_vec, cam_matrix, dist_matrix)
+            nose_3d_projection, jacobian = cv2.projectPoints(nose_3d, rot_vec, trans_vec, cam_matrix, dist_matrix)
 
             p1 = (int(nose_2d[0]), int(nose_2d[1]))
             p2 = (int(nose_3d_projection[0][0][0]), int(nose_3d_projection[0][0][1]))
 
-            line(image, p1, p2, (255, 0, 0), 2)
+            cv2.line(image, p1, p2, (255, 0, 0), 2)
 
             # Add the text on the image
-            putText(image, text, (20, 20), FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            cv2.putText(image, text, (20, 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
-    imshow('pose_estimation Estimation', image)
+    cv2.imshow('Head Pose Estimation', image)
 
-    if waitKey(5) & 0xFF == 27:
+    if cv2.waitKey(5) & 0xFF == 27:
         break
 
 cap.release()
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    pass
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/

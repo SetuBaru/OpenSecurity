@@ -8,7 +8,7 @@ class ManagementConsole:
     def __init__(self):
         self.current_path = os.getcwd()
         self.log_path = 'data/LOG.txt'
-        self.user_database = 'vision/data/usertable.json'
+        self.user_database = 'vision/data/user-table.json'
         self.data_path = 'data/Data'
 
     def Add_user(self, student_name=None, student_id=None, email=None, pass1=None, pass2=None):
@@ -36,7 +36,7 @@ class ManagementConsole:
         try:
             userdata_path = self.user_database
             json_object = json.dumps(dictionary, indent=4)  # Serializing json
-            with open(userdata_path, "w") as userprofile:  # Writing to usertable.json
+            with open(userdata_path, "w") as userprofile:  # Writing to user-table.json
                 userprofile.write(json_object)
             print(f'{student_name} registered successfully!')
         except Exception as ErrorMsg:

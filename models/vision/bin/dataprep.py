@@ -1,17 +1,14 @@
 import shutil
-import face_recognition
-import cv2
-import numpy as np
 import os
 import random
 
 
-class DataTool:
+class DataPrep:
 
     def __init__(self):
         self.current_path = os.getcwd()
         self.log_path = 'data/LOG.txt'
-        self.user_database = 'vision/data/usertable.json'
+        self.user_database = "vision/data/user-table.json"
         self.data_path = 'data/Data'
         self.embedding_path = {}  # Create a log to store paths
         self.generated_encodings = []
