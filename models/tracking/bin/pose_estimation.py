@@ -2,7 +2,8 @@ import cv2
 import mediapipe as mp
 import numpy as np
 
-mp_face_mesh = mp.solutions.face_mesh
+mp_solutions = mp.solutions
+mp_face_mesh = mp_solutions.face_mesh
 face_mesh = mp_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence=0.5)
 cap = cv2.VideoCapture(0)
 
@@ -11,9 +12,6 @@ while cap.isOpened():
     # Flip the image horizontally for a later selfie-view display
     # Also convert the color space from BGR to RGB
     image = cv2.cvtColor(cv2.flip(image, 1), cv2.COLOR_BGR2RGB)
-
-    # To improve performance
-    image.flags.writeable = True
 
     # Get the result
     results = face_mesh.process(image)
