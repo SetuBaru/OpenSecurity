@@ -88,8 +88,8 @@ def head_tracking(cam=0, _record=True, output_path='tests', _filename=f'sample_{
                 if cv2.waitKey(1) & 0xFF == ord('a'):
                     if _record is True:
                         _out_.release()
+                        print('Video Writing Completed.....\n')
                     break
-
     # Release webcam, release output, de-allocate memory.
     cap.release()
     cv2.destroyAllWindows()
