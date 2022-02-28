@@ -4,28 +4,24 @@ import numpy as np
 import random
 
 
-def head_tracking(cam=0, _record=True, output_path='samples', _filename=f'sample_{(random.randint(9, 9999))}',
+def head_tracking(cam=0, _record=True, output_path='tests', _filename=f'sample_{(random.randint(9, 9999))}',
                   _format='avi', _dimensions=(640, 480)):
     # Initialize the mediapipe.solutions face_mesh object and call the FaceMesh Function
-    mp_solutions = mp.solutions
-    mp_face_mesh = mp_solutions.face_mesh
+    mp_face_mesh = mp.solutions.face_mesh
     face_mesh = mp_face_mesh.FaceMesh(min_detection_confidence=0.8, min_tracking_confidence=0.3)
-    # Access video feed from a selected webcam ,define a codec and create a VideoWriter object
+    # Access video feed from a selected webcam
     cap = cv2.VideoCapture(cam)
+    # Define Codec and VideoWriter Object
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
     _out_ = cv2.VideoWriter(f"{output_path}/{_filename}.{_format}", fourcc, 20.0, _dimensions)
 
     # loop runs if capturing has been initialized.
-    while cap.isOpened():
-        # Read frames from a camera
+    while cap.isOpened():  # Read frames from a camera
         # success and image returned at each frame
         success, image = cap.read()
-        # Flip the image horizontally for a later selfie-view display
-        # Also convert the color space from BGR to RGB
+        # Flip the image horizontally and convert color space from BGR to RGB
         image = cv2.cvtColor(cv2.flip(image, 1), cv2.COLOR_BGR2RGB)
-        # Get the result
         results = face_mesh.process(image)
-        # To improve performance
         image.flags.writeable = True
         # Convert the color space from RGB to BGR
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
@@ -65,11 +61,11 @@ def head_tracking(cam=0, _record=True, output_path='samples', _filename=f'sample
                 x = angles[0] * 360
                 y = angles[1] * 360
                 # See where the user's head tilting
-                if y < -20:
+                if y < -10:
                     text = "Looking Left"
-                elif y > 20:
+                elif y > 10:
                     text = "Looking Right"
-                elif x < -20:
+                elif x < -10:
                     text = "Looking Down"
                 else:
                     text = "Forward"
@@ -86,12 +82,14 @@ def head_tracking(cam=0, _record=True, output_path='samples', _filename=f'sample
                     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
                     # output the frame
                     _out_.write(hsv)
-                # The original input frame is shown in  window
+                # An original input frame is shown in s window
                 cv2.imshow('Head Pose Estimation', image)
                 # Wait for 'a' key to stop the program
                 if cv2.waitKey(1) & 0xFF == ord('a'):
+                    if _record is True:
+                        _out_.release()
                     break
+
     # Release webcam, release output, de-allocate memory.
     cap.release()
-    _out_.release()
     cv2.destroyAllWindows()
