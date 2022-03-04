@@ -2,6 +2,7 @@ import user_management as manage
 import face_recognition
 import cv2
 import numpy as np
+import os
 
 # Load sample pictures and learn how to recognize them.
 manage = manage.ManagementConsole()
@@ -12,7 +13,91 @@ class FaceID:
         self.known_face_encodings = []
         self.known_face_ids = []
         # reference webcam [0] (the default cam).
-        self.vid_capture = cv2.VideoCapture(0)
+        self.vid_capture = None
+        self.sample_path = '/known_samples'
+
+    # batched_learning function.
+    # target stores relative path to samples
+    # focus stores an optional target that can be focused on, for targeted learning, else learning will be full.
+    # ignored list contains directories or files to be ignored during indexing.
+    def batched_learning(self, target=None, focus=None, ignored=None):
+        # checks if target is None
+        if target is None:
+            target = self.sample_path
+        else:
+            pass
+
+        # Checks if the _path provided is a directory.
+        if os.path.isdir(target):
+            known_sample_path = target
+        # Attempts to fix Entry errors by formatting _path relative to current working dir.
+        else:
+            print(f"{target}doesn't look like an Active directory, attempting to deal with discrepancies...\n")
+            known_sample_path = os.getcwd() + target
+
+        # If path is not a directory returns Invalid_Path
+        if not os.path.isdir(known_sample_path):
+            print(f'Invalid path selected. {target} cannot be used.\n')
+            return f'Invalid_Path'
+        # else if path is a directory then it accepts submission.
+        else:
+            print(f'Path {known_sample_path} verified Successfully!!\n')
+
+        # begins traversing known_samples_path
+        print(f'Search path set to {known_sample_path}\n')
+
+        # checks if ignored dir list is not set.
+        if ignored is None:
+            ignored = ['.DS_Store']
+
+        # initializing environmental variables.
+        current = None
+
+        # iterates through directories within the target path
+        for _id_ in os.listdir(known_sample_path):
+            # filters only for iterables not in ignored list.
+            if _id_ not in ignored:
+
+                # Checks if the user has not set mode to focused, if so it creates path to iterable.
+                if focus is None:
+                    print(f"Attempting to Index {_id_}...\n")
+                    current = known_sample_path + '/' + _id_
+
+                # if focused mode is True and target is Set.
+                elif focus is not None:
+                    # checks to see if the current iterable is the same as target, if so then creates a path to it.
+                    if _id_.lower() == focus.lower():
+                        print(f'Target {focus} Located! Attempting to Index....\n')
+                        current = known_sample_path + '/' + _id_
+                # Safety Net.
+                else:
+                    print('Conditions Validation Error.....\n')
+                    return 'InvalidConditions'
+
+            # traverses the current set path if it exists.
+            if current is not None:
+                for _image in os.listdir(current):
+
+                    # makes sure each iterable is not in ignored and is a file.
+                    if _image not in ignored and os.path.isfile(_image):
+                        sample_image = current + '/' + _image
+                        print(f'Learning the encodings for {sample_image}\n')
+
+                        # calls the learn function to learn iteratively.
+                        try:
+                            print(f'Attempting to Learn Encodings for {sample_image}...\n')
+                            self.learn(sample_image, _id_)
+                        except Exception as LearningError:
+                            print(f'Unable to learn encodings for {sample_image}!!\n')
+                            return f'ModuleInitializationError {LearningError}'
+
+                    # Displays a message if target is not a valid file.
+                    elif not os.path.isfile(_image):
+                        print(f'{_image} skipped. NotAFile!...\n')
+
+            # print Message if Current File is not indexed.
+            elif current is None:
+                print('NoPathSpecified....\n')
 
     def learn(self, sample_image, sample_name):
 
@@ -30,13 +115,14 @@ class FaceID:
         face_encodings = []
         face_names = []
         process_this_frame = True
+        self.vid_capture = cv2.VideoCapture(0)
 
         while True:
             # Grab a single frame of video
             ret, frame = self.vid_capture.read()
             # Resize frame of video to 1/4 size for faster face recognition processing
             small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
-            # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
+            # Convert the _image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
             rgb_small_frame = small_frame[:, :, ::-1]
             # Only process every other frame of video to save time
 
@@ -72,7 +158,7 @@ class FaceID:
                 cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
                 font = cv2.FONT_HERSHEY_DUPLEX
                 cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
-            # Display the resulting image
+            # Display the resulting _image
             cv2.imshow('Video', frame)
             # Hit 'q' on the keyboard to quit!
 
