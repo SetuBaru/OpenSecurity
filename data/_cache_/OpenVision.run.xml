@@ -1,0 +1,15 @@
+<component name="ProjectRunConfigurationManager">
+    <configuration default="false" name="OpenVision" type="CompoundRunConfigurationType">
+        <toRun name="_tracking" type="PythonConfigurationType"/>
+        <toRun name="dataprep" type="PythonConfigurationType"/>
+        <toRun name="eye_tracking" type="PythonConfigurationType"/>
+        <toRun name="face_id" type="PythonConfigurationType"/>
+        <toRun name="interface" type="PythonConfigurationType"/>
+        <toRun name="log_tool" type="PythonConfigurationType"/>
+        <toRun name="model" type="PythonConfigurationType"/>
+        <toRun name="pose_estimation" type="PythonConfigurationType"/>
+        <toRun name="setup" type="PythonConfigurationType"/>
+        <toRun name="user_management" type="PythonConfigurationType"/>
+        <method v="2"/>
+    </configuration>
+</component>
