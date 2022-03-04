@@ -1,2 +1,3 @@
 /.idea/
 /models/tracking/tests
+/models/vision/known_samples/
