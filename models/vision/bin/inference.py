@@ -94,9 +94,9 @@ class FaceId:
                         try:
                             print(f'Attempting to Encode {_image}...')
                             self.learn(sample_image, _id_)
-                            print(f'{_image} encoded successfully!...')
+                            print(f'{_image} encoded successfully!!\n')
                         except Exception as LearningError:
-                            print(f'Unable to learn encodings for {_image}!!')
+                            print(f'Unable to learn encodings for {_image}!!\n')
                             return f'ModuleInitializationError {LearningError}'
 
                     # Displays a message if target is not a valid file.
@@ -119,13 +119,13 @@ class FaceId:
 
     # Defines a function to detect and identify Faces. Cross-References real-time data against a predefined Dataset.
     def detect(self):
-
+        print('Detection Function Initialized....')
         # Initialize required variables.
         face_locations = []
         face_encodings = []
         face_names = []
         process_this_frame = True
-        print('Assigning Video Capture Object....\n')
+        print('Assigning Video Capture Object....')
         self.vid_capture = cv2.VideoCapture(0)
         print('Video Capture Object Successfully set to 0.')
 
@@ -155,7 +155,7 @@ class FaceId:
                     name = "Unknown"
 
                     # Or instead, use the known face with the smallest distance to the new face.
-                    face_distances = face_recognition.face_distance(self.known_face_ids, face_encoding)
+                    face_distances = face_recognition.face_distance(self.known_face_encodings, face_encoding)
                     best_match_index = np.argmin(face_distances)
                     if matches[best_match_index]:
                         name = self.known_face_ids[best_match_index]
