@@ -4,7 +4,8 @@
 
 ### **PROJECT UPDATES**
 <ul>
-  <li> 05/03/22 - Face Recogntion from WebCam Complete @ https://www.youtube.com/watch?v=ECtWQH0ACaI 
+  <li> 05/03/22 - Face Recogntion On WebCam Footage Implemented and Tested. 
+    <br>results found on https://www.youtube.com/watch?v=ECtWQH0ACaI 
 </ul><br>
 
 ### ---Development Report---
