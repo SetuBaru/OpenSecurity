@@ -90,10 +90,9 @@ class FaceId:
 
                     # Makes sure each iterable is not in ignored and is a file.
                     if _image not in ignored and os.path.isfile(sample_image):
-                        print(f'Learning the encodings for {_image}')
                         # Calls the learn function to learn iteratively.
                         try:
-                            print(f'Attempting to Learn Encodings for {_image}...\n')
+                            print(f'Attempting to Encode {_image}...')
                             self.learn(sample_image, _id_)
                             print(f'{_image} encoded successfully!...')
                         except Exception as LearningError:
@@ -103,7 +102,7 @@ class FaceId:
                     # Displays a message if target is not a valid file.
                     elif _image in ignored or not os.path.isfile(sample_image):
                         print(f'{_image} is NotAFile! skipping...')
-        print("Learning Complete!...")
+        print("........Learning Complete!...")
 
     # Function to Learn Features.
     # sample_image indicated relative path to sample image.
