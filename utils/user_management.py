@@ -15,7 +15,7 @@ class ManagementConsole:
         if student_name is None:
             student_name = input('Enter the Student Name used for loging in: ')
         elif student_id is None:
-            student_id = input('Enter ID NO. of prospective student: ')
+            student_id = input('Enter Abubakr NO. of prospective student: ')
         elif email is None:
             student_id = input("Enter email to use in registration: ")
         elif pass1 is None or pass2 is None:
@@ -51,7 +51,7 @@ class ManagementConsole:
             if mode.lower() == 'availability scan':
                 if student_id in data:
                     print(f"{student_id} already registered to an account...\n ")
-                    print(f"Please make sure you entered your ID correctly or contact support staff if problem "
+                    print(f"Please make sure you entered your Abubakr correctly or contact support staff if problem "
                           f"persists\n")
                 elif email in data:
                     print(f"{email} already registered to an account...\n")
