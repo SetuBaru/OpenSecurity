@@ -109,32 +109,35 @@ class FaceId:
     # sample_image indicated relative path to sample image.
     # sample_name indicates label or name assigned to that sample.
     def learn(self, sample_image, sample_name):
-
         # Load a sample picture and learn how to recognize it.
         _image = face_recognition.load_image_file(sample_image)
         _encoding = face_recognition.face_encodings(_image)[0]
-
-        # Create array of known face encodings and IDs.
+        # Checks if sample is part of the known_face_ids.
         if sample_name not in self.known_face_ids:
+            # prompts user to make entry to known_face_ids and biometrics record.
             _r = input('New Sample Detected.\nConfirm Entry(Y/N):\t')
             if _r.upper() == 'Y':
                 self.known_face_ids.append(sample_name)
                 self.biometrics[sample_name] = _encoding
                 print('Entry and Biometric Data registered!')
+            # allows the user to make another entry
             else:
                 _n = input('Please Re-enter sample name: ')
                 self.learn(sample_image, _n)
                 exit()
         else:
             print(f'{sample_name} Located in Biometric DataLog')
-
+        # If the _encoding is not part of the known_face_encodings
         if _encoding not in self.known_face_encodings:
+            # appends it to known_face_encodings and adds it to the biometric record.
             print('New Encoded Detected. Indexing....')
             self.known_face_encodings.append(_encoding)
             self.biometrics[sample_name] = self.biometrics[sample_name] + _encoding
+        # Else if it is part of the known_face_encodings gives the user the option to locate it.
         else:
             _r = input('Biometric Match Found!\nLocate source(Y/N):')
             if _r.upper() == 'Y':
+                # Lists the Biometrics key associated with a given _encoding
                 match_result = list(self.biometrics.keys())[list(self.biometrics.values()).index(_encoding)]
                 print('Source Located >> ' + match_result)
             else:
