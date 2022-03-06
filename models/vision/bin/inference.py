@@ -14,6 +14,7 @@ class FaceId:
         # setting defaults.
         self.known_face_encodings = []
         self.known_face_ids = []
+        self.biometrics = {}
         self.vid_capture = None
         self.sample_path = '/known_samples'
 
@@ -114,8 +115,30 @@ class FaceId:
         _encoding = face_recognition.face_encodings(_image)[0]
 
         # Create array of known face encodings and IDs.
-        self.known_face_encodings.append(_encoding)
-        self.known_face_ids.append(sample_name)
+        if sample_name not in self.known_face_ids:
+            _r = input('New Sample Detected.\nConfirm Entry(Y/N):\t')
+            if _r.upper() == 'Y':
+                self.known_face_ids.append(sample_name)
+                self.biometrics[sample_name] = _encoding
+                print('Entry and Biometric Data registered!')
+            else:
+                _n = input('Please Re-enter sample name: ')
+                self.learn(sample_image, _n)
+                exit()
+        else:
+            print(f'{sample_name} Located in Biometric DataLog')
+
+        if _encoding not in self.known_face_encodings:
+            print('New Encoded Detected. Indexing....')
+            self.known_face_encodings.append(_encoding)
+            self.biometrics[sample_name] = self.biometrics[sample_name] + _encoding
+        else:
+            _r = input('Biometric Match Found!\nLocate source(Y/N):')
+            if _r.upper() == 'Y':
+                match_result = list(self.biometrics.keys())[list(self.biometrics.values()).index(_encoding)]
+                print('Source Located >> ' + match_result)
+            else:
+                print('Action Aborted..')
 
     # Defines a function to detect and identify Faces. Cross-References real-time data against a predefined Dataset.
     def detect(self):
@@ -190,3 +213,17 @@ class FaceId:
         self.vid_capture.release()
         cv2.destroyAllWindows()
         print('Operation Terminated.')
+
+
+if __name__ == "__main__":
+    os.chdir('../known_samples')
+    print("current path: " + os.getcwd())
+    _target = "Abubakr Osama"
+    f = FaceId()
+    for _sample in os.listdir(_target):
+        if _sample.upper() == '.DS_STORE':
+            pass
+        else:
+            f.learn(_target + '/' + _sample, _target)
+    print(f"known Face ID's:\n{f.known_face_ids}")
+    print(f"Stored Embeddings {f.known_face_encodings}")
