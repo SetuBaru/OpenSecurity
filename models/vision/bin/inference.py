@@ -113,6 +113,7 @@ class FaceId:
         # Load a sample picture and learn how to recognize it.
         _image = face_recognition.load_image_file(sample_image)
         _encoding = face_recognition.face_encodings(_image)[0]
+
         # Checks if sample is part of the known_face_ids.
         if sample_name not in self.known_face_ids:
             # prompts user to make entry to known_face_ids and biometrics record.
@@ -128,13 +129,15 @@ class FaceId:
                 exit()
         else:
             pass
+
         # If the _encoding is not part of the known_face_encodings
-        if _encoding not in np.array(self.known_face_encodings):
+        if len(self.known_face_encodings) == 0 or _encoding not in np.array(self.known_face_encodings):
             # appends it to known_face_encodings and adds it to the biometric record.
             self.counter1 = self.counter1 + 1
             print(f'Indexing: ({self.counter1})')
             self.known_face_encodings.append(_encoding)
             self.biometrics[sample_name] = self.biometrics[sample_name] + _encoding
+
         # Else if it is part of the known_face_encodings gives the user the option to locate it.
         else:
             _r = input('Biometric Match Found!\nLocate source(Y/N):')
@@ -230,5 +233,6 @@ if __name__ == "__main__":
             pass
         else:
             f.learn(_target + '/' + _sample, _target)
-    print(f"known Face ID's:\n{f.known_face_ids}")
-    print(f"Stored Embeddings {f.known_face_encodings}")
+    print(f"known Face ID's:\t{f.known_face_ids}\n")
+    print(f"Stored Embeddings:\n{f.known_face_encodings}\n")
+    print(f"Biometric Record:\n {f.biometrics}")
