@@ -5,26 +5,22 @@ import json
 
 # Importing the FaceID object
 class Learning:
-
     # Function initialized on Learning Object Initialization.
     def __init__(self):
         # Checks if data path exits, else terminated initialization function.
         try:
             print('Checking if Directory Path Exists...')
-            os.chdir(os.getcwd()[::-2] + '/' + 'data')
+            os.chdir(os.getcwd()[::-3] + '/' + 'data')
         except Exception as DataPathNotFound:
             print(f'DataPathError!... {DataPathNotFound}')
             exit()
-
         # specifies StateLog file.
         self.state_path = os.path.dirname('MachineState.json')
-
         # creates variables to store state encodings
         self.last = None
         self.current = {}
         self.next = None
         self.build = 0
-
         # checks if the state_path exists in cwd.
         if os.path.exists(self.state_path):
             # opens the state path file

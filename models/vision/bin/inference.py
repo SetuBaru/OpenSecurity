@@ -218,16 +218,16 @@ if __name__ == "__main__":
         os.chdir('../known_samples')
         print("current path: " + os.getcwd())
         _target = "Abubakr Osama"
-        f = FaceId()
+        _f = FaceId()
         for _sample in os.listdir(_target):
             if _sample.upper() == '.DS_STORE':
                 pass
             else:
-                f.encode(_target + '/' + _sample, _target)
-        print(f"known Face ID's:\t{f.known_face_ids}\n")
-        print(f"Stored Embeddings:\n{f.known_face_encodings}\n")
-        print(f"Biometric Record:\n {f.biometrics}")
+                _f.encode(_target + '/' + _sample, _target)
+        print(f"known Face ID's:\t{_f.known_face_ids}\n")
+        print(f"Stored Embeddings:\n{_f.known_face_encodings}\n")
+        print(f"Biometric Record:\n {_f.biometrics}")
 
 
-    f = FaceId()
-    f.batched_encode(None, 'Abubakr Osama')
+    f_ = FaceId()
+    f_.batched_encode(None, 'Emma Watsona')
