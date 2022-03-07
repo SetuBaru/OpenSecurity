@@ -109,24 +109,30 @@ class FaceId:
     # Function to Learn Features.
     # sample_image indicated relative path to sample image.
     # sample_name indicates label or name assigned to that sample.
-    def learn(self, sample_image, sample_name):
+    def learn(self, sample_image, sample_name, prompt_on_id=False, attentive_learning=False):
         # Load a sample picture and learn how to recognize it.
         _image = face_recognition.load_image_file(sample_image)
         _encoding = face_recognition.face_encodings(_image)[0]
 
         # Checks if sample is part of the known_face_ids.
-        if sample_name not in self.known_face_ids:
+        if sample_name not in self.known_face_ids or self.known_face_ids == 0:
             # prompts user to make entry to known_face_ids and biometrics record.
-            _r = input('New Sample Detected.\nConfirm Entry(Y/N):\t')
-            if _r.upper() == 'Y':
-                self.known_face_ids.append(sample_name)
-                self.biometrics[sample_name] = _encoding
-                print('Entry and Biometric Data registered!')
-            # allows the user to make another entry
+            if prompt_on_id is True:
+                _r = input('New Sample Detected.\nConfirm Entry(Y/N):\t')
+                if _r.upper() == 'Y':
+                    self.known_face_ids.append(sample_name)
+                    self.biometrics.setdefault(sample_name, []).append(_encoding)
+                    print(f'{sample_name} Biometric Data registered!')
+                # allows the user to make another entry
+                else:
+                    _n = input('Please Re-enter sample name: ')
+                    self.learn(sample_image, _n, True)
+                    exit()
+            # Adds the sample_name to the biometric record
             else:
-                _n = input('Please Re-enter sample name: ')
-                self.learn(sample_image, _n)
-                exit()
+                self.known_face_ids.append(sample_name)
+                self.biometrics.setdefault(sample_name, []).append(_encoding)
+                print(f'{sample_name} and Biometric Data registered!')
         else:
             pass
 
@@ -136,24 +142,27 @@ class FaceId:
             self.counter1 = self.counter1 + 1
             print(f'Indexing: ({self.counter1})')
             self.known_face_encodings.append(_encoding)
-            self.biometrics[sample_name] = self.biometrics[sample_name] + _encoding
-
+            self.biometrics.setdefault(sample_name, []).append(_encoding)
         # Else if it is part of the known_face_encodings gives the user the option to locate it.
         else:
-            _r = input('Biometric Match Found!\nLocate source(Y/N):')
-            if _r.upper() == 'Y':
-                # Lists the Biometrics key associated with a given _encoding
-                match_result = list(self.biometrics.keys())[list(self.biometrics.values()).index(_encoding)]
-                print('Source Located >> ' + match_result)
+            print('Biometric Data already exists...\n')
+            if attentive_learning is True:
+                _r = input('Locate Associated ID?\n[Y/N]: ')
+                if _r.upper() == 'Y':
+                    # Lists the Biometrics key associated with a given _encoding
+                    match_result = list(self.biometrics.keys())[list(self.biometrics.values()).index(_encoding)]
+                    print('Source Located >> ' + match_result)
+                else:
+                    print('Action Aborted..')
             else:
-                print('Action Aborted..')
+                pass
 
     # Defines a function to detect and identify Faces. Cross-References real-time data against a predefined Dataset.
     def detect(self):
         print('Detection Function Initialized....')
         # Initialize required variables.
         face_locations = []
-        face_encodings = []
+        # face_encodings = []
         face_names = []
         process_this_frame = True
         print('Assigning Video Capture Object....')
