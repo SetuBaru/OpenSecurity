@@ -17,6 +17,7 @@ class FaceId:
         self.biometrics = {}
         self.vid_capture = None
         self.sample_path = '/known_samples'
+        self.counter1 = 0
 
     # batched_learning function.
     # target stores relative path to samples
@@ -126,11 +127,12 @@ class FaceId:
                 self.learn(sample_image, _n)
                 exit()
         else:
-            print(f'{sample_name} Located in Biometric DataLog')
+            pass
         # If the _encoding is not part of the known_face_encodings
-        if _encoding not in self.known_face_encodings:
+        if _encoding not in np.array(self.known_face_encodings):
             # appends it to known_face_encodings and adds it to the biometric record.
-            print('New Encoded Detected. Indexing....')
+            self.counter1 = self.counter1 + 1
+            print(f'Indexing: ({self.counter1})')
             self.known_face_encodings.append(_encoding)
             self.biometrics[sample_name] = self.biometrics[sample_name] + _encoding
         # Else if it is part of the known_face_encodings gives the user the option to locate it.
