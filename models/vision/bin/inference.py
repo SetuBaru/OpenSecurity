@@ -16,33 +16,33 @@ class FaceId:
         self.known_face_ids = []
         self.biometrics = {}
         self.vid_capture = None
-        self.sample_path = '/known_samples'
+        self.sample_path = '/Users/mohammedabbarroh/PycharmProjects/OpenVision/models/vision/known_samples'
         self.counter1 = 0
 
     # batched_learning function.
-    # target stores relative path to samples
+    # target_path stores relative path to samples
     # focus stores an optional target that can be focused on, for targeted learning, else learning will be full.
     # ignored list contains directories or files to be ignored during indexing.
-    def batched_learning(self, target=None, focus=None, ignored=None):
+    def batched_encode(self, sample_path=None, target=None, ignored=None):
 
         # checks if the target path to traverse in is set to None
-        if target is None:
-            target = self.sample_path
+        if sample_path is None:
+            sample_path = self.sample_path
         else:
             pass
 
         # Checks if the target provided is a directory.
-        if os.path.isdir(target):
-            known_sample_path = target
+        if os.path.isdir(sample_path):
+            known_sample_path = sample_path
 
         # Attempts to fix path errors by re-formatting the target specified relative to current working directory.
         else:
-            print(f"{target} is not an Active directory, dealing with discrepancies...")
-            known_sample_path = os.getcwd() + target
+            print(f"{sample_path} is not an Active directory, dealing with discrepancies...")
+            known_sample_path = os.getcwd() + sample_path
 
         # Checks if the target specified is not a directory, if so returns Invalid_Path
         if not os.path.isdir(known_sample_path):
-            print(f'Invalid path selected. {target} cannot be used.')
+            print(f'Invalid path selected. {sample_path} cannot be used.')
             return f'Invalid_Path'
 
         # else checks if the target specified is a directory, if so accepts it.
@@ -61,23 +61,20 @@ class FaceId:
 
         # Iterates through directories within a target path.
         for _id_ in os.listdir(known_sample_path):
-
             # Checks if current Iterable is in the ignored list.
             if _id_ not in ignored:
-
-                # Checks if the user has set a focus, if not then creates a path to iterable.
-                if focus is None:
+                # Checks if the user has set a target, if not then creates a path to iterable.
+                if target is None:
                     print(f"Indexing {_id_}...")
                     current = known_sample_path + '/' + _id_
-
-                # verifies if focus is set.
-                elif focus is not None:
-
-                    # Checks to see if the current iterable is the same as focus, if so then creates a relative path.
-                    if _id_.lower() == focus.lower():
-                        print(f'Target {focus} Located! Attempting to Index....')
+                # verifies if target is set.
+                elif target is not None:
+                    # Checks to see if the current iterable is the same as target, if so then creates an object path.
+                    if _id_.lower() == target.lower():
+                        print(f'Sample file for {target} Located! Attempting to Index....')
                         current = known_sample_path + '/' + _id_
-
+                    else:
+                        current = None
                 # Safety Net.
                 else:
                     print('Conditions Validation Error.....')
@@ -95,7 +92,7 @@ class FaceId:
                         # Calls the learn function to learn iteratively.
                         try:
                             print(f'Attempting to Encode {_image}...')
-                            self.learn(sample_image, _id_)
+                            self.encode(sample_image, _id_)
                             print(f'{_image} encoded successfully!!\n')
                         except Exception as LearningError:
                             print(f'Unable to learn encodings for {_image}!!\n')
@@ -109,7 +106,7 @@ class FaceId:
     # Function to Learn Features.
     # sample_image indicated relative path to sample image.
     # sample_name indicates label or name assigned to that sample.
-    def learn(self, sample_image, sample_name, prompt_on_id=False, attentive_learning=False):
+    def encode(self, sample_image, sample_name, prompt_on_id=False, attentive_learning=False):
         # Load a sample picture and learn how to recognize it.
         _image = face_recognition.load_image_file(sample_image)
         _encoding = face_recognition.face_encodings(_image)[0]
@@ -126,7 +123,7 @@ class FaceId:
                 # allows the user to make another entry
                 else:
                     _n = input('Please Re-enter sample name: ')
-                    self.learn(sample_image, _n, True)
+                    self.encode(sample_image, _n, True)
                     exit()
             # Adds the sample_name to the biometric record
             else:
@@ -233,15 +230,20 @@ class FaceId:
 
 
 if __name__ == "__main__":
-    os.chdir('../known_samples')
-    print("current path: " + os.getcwd())
-    _target = "Abubakr Osama"
+    def test():
+        os.chdir('../known_samples')
+        print("current path: " + os.getcwd())
+        _target = "Abubakr Osama"
+        f = FaceId()
+        for _sample in os.listdir(_target):
+            if _sample.upper() == '.DS_STORE':
+                pass
+            else:
+                f.encode(_target + '/' + _sample, _target)
+        print(f"known Face ID's:\t{f.known_face_ids}\n")
+        print(f"Stored Embeddings:\n{f.known_face_encodings}\n")
+        print(f"Biometric Record:\n {f.biometrics}")
+
+
     f = FaceId()
-    for _sample in os.listdir(_target):
-        if _sample.upper() == '.DS_STORE':
-            pass
-        else:
-            f.learn(_target + '/' + _sample, _target)
-    print(f"known Face ID's:\t{f.known_face_ids}\n")
-    print(f"Stored Embeddings:\n{f.known_face_encodings}\n")
-    print(f"Biometric Record:\n {f.biometrics}")
+    f.batched_encode(None, 'Abubakr Osama')

@@ -62,7 +62,7 @@ class Learning:
     def learn(self):
         recognitions = {}
         fd = Fd()
-        fd.batched_learning(target='known')
+        fd.batched_encode(sample_path='known')
         _last = [self.last, self.current, self.next]
         for _id in fd.known_face_ids:
             recognitions[_id] = fd.known_face_encodings
