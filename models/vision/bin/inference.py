@@ -10,7 +10,7 @@ manage = manage.ManagementConsole()
 
 class FaceId:
     def __init__(self):
-        print('FaceID object Initialization successful!....')
+        print('FaceID object Initialized.')
         # setting defaults.
         self.known_face_encodings = []
         self.known_face_ids = []
@@ -24,41 +24,34 @@ class FaceId:
     # focus stores an optional target that can be focused on, for targeted learning, else learning will be full.
     # ignored list contains directories or files to be ignored during indexing.
     def batched_encode(self, sample_path=None, target=None, ignored=None):
-
         # checks if the target path to traverse in is set to None
         if sample_path is None:
             sample_path = self.sample_path
         else:
             pass
-
         # Checks if the target provided is a directory.
         if os.path.isdir(sample_path):
             known_sample_path = sample_path
-
         # Attempts to fix path errors by re-formatting the target specified relative to current working directory.
         else:
             print(f"{sample_path} is not an Active directory, dealing with discrepancies...")
             known_sample_path = os.getcwd() + sample_path
-
         # Checks if the target specified is not a directory, if so returns Invalid_Path
         if not os.path.isdir(known_sample_path):
             print(f'Invalid path selected. {sample_path} cannot be used.')
             return f'Invalid_Path'
-
         # else checks if the target specified is a directory, if so accepts it.
         else:
-            print(f'{known_sample_path} successfully verified!!')
-
+            print(f'{known_sample_path} verified successfully.')
         # Begins traversing known_samples_path
         print(f'Search path set to {known_sample_path}')
-
         # Checks if an ignored list is specified, if not it generates ones.
         if ignored is None:
             ignored = ['.DS_Store']
-
+        else:
+            pass
         # Initializing a variable to store the current path.
         current = None
-
         # Iterates through directories within a target path.
         for _id_ in os.listdir(known_sample_path):
             # Checks if current Iterable is in the ignored list.
@@ -71,38 +64,28 @@ class FaceId:
                 elif target is not None:
                     # Checks to see if the current iterable is the same as target, if so then creates an object path.
                     if _id_.lower() == target.lower():
-                        print(f'Sample file for {target} Located! Attempting to Index....')
+                        print(f'Located sample file for :{target}:! Indexing....')
                         current = known_sample_path + '/' + _id_
-                    # Else sets the
+                    # else destroys current path.
                     else:
                         current = None
-                # Safety Net.
-                else:
-                    print('Conditions Validation Error.....')
-                    return 'InvalidConditions'
-
             # Traverses the current set path if it exists.
             if current is not None:
                 for _image in os.listdir(current):
-
                     # Creates a path to the iterable.
                     sample_image = current + '/' + _image
-
                     # Makes sure each iterable is not in ignored and is a file.
                     if _image not in ignored and os.path.isfile(sample_image):
                         # Calls the learn function to learn iteratively.
                         try:
-                            print(f'Attempting to Encode {_image}...')
                             self.encode(sample_image, _id_)
-                            print(f'{_image} encoded successfully!!\n')
                         except Exception as LearningError:
                             print(f'Unable to learn encodings for {_image}!!\n')
                             return f'ModuleInitializationError {LearningError}'
-
                     # Displays a message if target is not a valid file.
                     elif _image in ignored or not os.path.isfile(sample_image):
-                        print(f'{_image} is NotAFile! skipping...')
-        print("........Learning Complete!...")
+                        print(f'{_image} skipped...')
+        print("Learning process completed successfully!!...")
 
     # Function to Learn Features.
     # sample_image indicated relative path to sample image.
