@@ -73,6 +73,7 @@ class FaceId:
                     if _id_.lower() == target.lower():
                         print(f'Sample file for {target} Located! Attempting to Index....')
                         current = known_sample_path + '/' + _id_
+                    # Else sets the
                     else:
                         current = None
                 # Safety Net.
