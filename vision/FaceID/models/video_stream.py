@@ -23,7 +23,7 @@ class FaceID:
     # target_path stores relative path to samples
     # focus stores an optional target that can be focused on, for targeted learning, else learning will be full.
     # ignored list contains directories or files to be ignored during indexing.
-    def encode_cycle(self, sample_path=None, target=None, ignored=None):
+    def encode(self, sample_path=None, target=None, ignored=None):
         # checks if the target path to traverse in is set to None
         if sample_path is None:
             sample_path = self.sample_path
@@ -78,7 +78,7 @@ class FaceID:
                     if _image not in ignored and os.path.isfile(sample_image):
                         # Calls the learn function to learn iteratively.
                         try:
-                            self.encode(sample_image, _id_)
+                            self.identify(sample_image, _id_)
                         except Exception as LearningError:
                             print(f'Unable to learn encodings for {_image}!!\n')
                             return f'ModuleInitializationError {LearningError}'
@@ -90,7 +90,7 @@ class FaceID:
     # Function to Learn Features.
     # sample_image indicated relative path to sample image.
     # sample_name indicates label or name assigned to that sample.
-    def encode(self, sample_image, sample_name, prompt_on_id=False, attentive_learning=False):
+    def identify(self, sample_image, sample_name, prompt_on_id=False, attentive_learning=False):
         # Load a sample picture and learn how to recognize it.
         _image = face_recognition.load_image_file(sample_image)
         _encoding = face_recognition.face_encodings(_image)[0]
@@ -107,7 +107,7 @@ class FaceID:
                 # allows the user to make another entry
                 else:
                     _n = input('Please Re-enter sample name: ')
-                    self.encode(sample_image, _n, True)
+                    self.identify(sample_image, _n, True)
                     exit()
             # Adds the sample_name to the biometric record_
             else:
@@ -222,11 +222,11 @@ if __name__ == "__main__":
             if _sample.upper() == '.DS_STORE':
                 pass
             else:
-                _f.encode(_target + '/' + _sample, _target)
+                _f.identify(_target + '/' + _sample, _target)
         print(f"known Face ID's:\t{_f.known_face_ids}\n")
         print(f"Stored Embeddings:\n{_f.known_face_encodings}\n")
         print(f"Biometric Record:\n {_f.biometrics}")
 
 
     f_ = FaceID()
-    f_.batched_encode(None, 'Emma Watsona')
+    f_.encode(None, 'Emma Watson')
