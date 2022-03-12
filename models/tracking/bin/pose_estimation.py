@@ -76,7 +76,7 @@ def head_tracking(cam=0, _record=True, output_path='tests', _filename=f'sample_{
                 cv2.line(image, p1, p2, (255, 0, 0), 2)
                 # Add the text on the _image
                 cv2.putText(image, text, (20, 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-                # record the results
+                # record_ the results
                 if _record is True:
                     # Converts to HSV color space, OCV reads colors as BGR (_image is converted to hsv)
                     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)

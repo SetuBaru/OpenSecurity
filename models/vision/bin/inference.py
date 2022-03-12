@@ -16,7 +16,7 @@ class FaceId:
         self.known_face_ids = []
         self.biometrics = {}
         self.vid_capture = None
-        self.sample_path = '/Users/mohammedabbarroh/PycharmProjects/OpenVision/models/vision/known_samples'
+        self.sample_path = '//models/vision/known_samples'
         self.counter1 = 0
 
     # batched_learning function.
@@ -97,7 +97,7 @@ class FaceId:
 
         # Checks if sample is part of the known_face_ids.
         if sample_name not in self.known_face_ids or self.known_face_ids == 0:
-            # prompts user to make entry to known_face_ids and biometrics record.
+            # prompts user to make entry to known_face_ids and biometrics record_.
             if prompt_on_id is True:
                 _r = input('New Sample Detected.\nConfirm Entry(Y/N):\t')
                 if _r.upper() == 'Y':
@@ -109,7 +109,7 @@ class FaceId:
                     _n = input('Please Re-enter sample name: ')
                     self.encode(sample_image, _n, True)
                     exit()
-            # Adds the sample_name to the biometric record
+            # Adds the sample_name to the biometric record_
             else:
                 self.known_face_ids.append(sample_name)
                 self.biometrics.setdefault(sample_name, []).append(_encoding)
@@ -119,7 +119,7 @@ class FaceId:
 
         # If the _encoding is not part of the known_face_encodings
         if len(self.known_face_encodings) == 0 or _encoding not in np.array(self.known_face_encodings):
-            # appends it to known_face_encodings and adds it to the biometric record.
+            # appends it to known_face_encodings and adds it to the biometric record_.
             self.counter1 = self.counter1 + 1
             print(f'Indexing: ({self.counter1})')
             self.known_face_encodings.append(_encoding)
@@ -170,17 +170,15 @@ class FaceId:
                 face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
                 face_names = []
                 for face_encoding in face_encodings:
-
                     # See if the face is a match for the known face(s).
                     matches = face_recognition.compare_faces(self.known_face_encodings, face_encoding)
                     name = "Unknown"
-
                     # Or instead, use the known face with the smallest distance to the new face.
                     face_distances = face_recognition.face_distance(self.known_face_encodings, face_encoding)
                     best_match_index = np.argmin(face_distances)
                     if matches[best_match_index]:
                         name = self.known_face_ids[best_match_index]
-                    face_names.append(name)
+                        face_names.append(name)
             process_this_frame = not process_this_frame
 
             # Display the results.
