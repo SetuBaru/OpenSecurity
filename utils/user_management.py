@@ -8,7 +8,7 @@ class ManagementConsole:
     def __init__(self):
         self.current_path = os.getcwd()
         self.log_path = 'data/LOG.txt'
-        self.user_database = 'vision/data/user-table.json'
+        self.user_database = 'FaceID/data/user-table.json'
         self.data_path = 'data/Data'
 
     def Add_user(self, student_name=None, student_id=None, email=None, pass1=None, pass2=None):

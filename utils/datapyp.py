@@ -3,7 +3,7 @@ import os
 import random
 
 
-class DataPrep:
+class Datapyp:
 
     def __init__(self):
         self.current_path = os.getcwd()

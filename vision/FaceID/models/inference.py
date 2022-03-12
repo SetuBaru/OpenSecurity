@@ -16,7 +16,7 @@ class FaceId:
         self.known_face_ids = []
         self.biometrics = {}
         self.vid_capture = None
-        self.sample_path = '//models/vision/known_samples'
+        self.sample_path = '//FaceID/FaceID/known_samples'
         self.counter1 = 0
 
     # batched_learning function.
@@ -143,7 +143,7 @@ class FaceId:
         print('Detection Function Initialized....')
         # Initialize required variables.
         face_locations = []
-        # face_encodings = []
+        # encodings = []
         face_names = []
         process_this_frame = True
         print('Assigning Video Capture Object....')
