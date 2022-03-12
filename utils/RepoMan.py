@@ -5,18 +5,16 @@ class Module:
         self.load()
 
     # A function that loads and verifies module existence.
-    def load(self, modules=None, module_path=None, defaults=None):
+    def load(self, module_path=None, modules=None, defaults=None):
         if defaults is None:
             defaults = self.defaults
         try:
             if modules is None:
-                print('Loading environment defaults.....')
-
+                print('Setting up defaults...')
                 if isinstance(defaults, list):
                     for default in defaults:
                         print(f'importing the {default} module...')
                         eval(f'import {str(default)}')
-
                 elif isinstance(defaults, str):
                     print(f'importing the {defaults} module...')
                     eval(f'import {str(defaults)}')
@@ -26,23 +24,21 @@ class Module:
 
             elif isinstance(modules, str) and module_path is not None:
                 print(f'Importing the {modules} module...')
-                eval(f"from {module_path} import {modules}")
+                eval(f"from {str(module_path)} import {str(modules)}")
 
             elif isinstance(modules, str) and module_path is None:
                 print(f'Importing the {modules} module...')
-                eval(f'import {modules}')
+                eval(f'import {str(modules)}')
 
             elif isinstance(modules, list) and module_path is not None:
-                for location in module_path:
-                    for module in modules:
-                        print(f'Importing the {modules} module...')
-                        eval(f"from {location} import {str(module)}")
+                for module in modules:
+                    print(f'Importing the {module} module...')
+                    eval(f"from {str(module_path)} import {str(module)}")
 
-            elif isinstance(modules, list) and module_path is not None:
-                for location in module_path:
-                    for module in modules:
-                        print(f'Importing the {modules} module...')
-                        eval(f"from {location} import {str(module)}")
+            elif isinstance(modules, list) and module_path is None:
+                for module in modules:
+                    print(f'Importing the {module} module...')
+                    eval(f"import {str(module)}")
 
         except ImportError or ImportWarning or ModuleNotFoundError as ModuleLoadError:
             return f"'ModuleLoadError': Module probably not found...\terror msg:{ModuleLoadError}"
@@ -50,11 +46,18 @@ class Module:
         except Exception as UnexpectedError:
             return f"'UnexpectedError Encountered during the loading of modules':\t\t\t\t{UnexpectedError}"
 
-        finally:
-            if modules is not None:
-                return f'{modules} Imported successful!\n'
+        if modules is not None:
+            if isinstance(modules, list):
+                modules = modules.__str__()
+                return f'{str(modules)} Imported successful!\n'
             else:
-                return f'{defaults} Imported successful!\n'
+                return f'{str(modules)} Imported successful!\n'
+        else:
+            if isinstance(defaults, list):
+                defaults = defaults.__str__()
+                return f'{str(defaults)} Imported successful!\n'
+            else:
+                return f'{str(defaults)} Imported successful!\n'
 
 
 # UNIT TESTING
