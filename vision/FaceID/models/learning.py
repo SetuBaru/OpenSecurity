@@ -1,4 +1,4 @@
-from inference import FaceId as Fd
+from video_stream import FaceID as Fd
 import os
 import json
 

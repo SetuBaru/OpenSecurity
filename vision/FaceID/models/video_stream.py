@@ -8,7 +8,7 @@ import os
 manage = manage.ManagementConsole()
 
 
-class FaceId:
+class FaceID:
     def __init__(self):
         print('FaceID object Initialized.')
         # setting defaults.
@@ -23,7 +23,7 @@ class FaceId:
     # target_path stores relative path to samples
     # focus stores an optional target that can be focused on, for targeted learning, else learning will be full.
     # ignored list contains directories or files to be ignored during indexing.
-    def batched_encode(self, sample_path=None, target=None, ignored=None):
+    def encode_cycle(self, sample_path=None, target=None, ignored=None):
         # checks if the target path to traverse in is set to None
         if sample_path is None:
             sample_path = self.sample_path
@@ -178,7 +178,8 @@ class FaceId:
                     best_match_index = np.argmin(face_distances)
                     if matches[best_match_index]:
                         name = self.known_face_ids[best_match_index]
-                        face_names.append(name)
+                    # Append name to list of face_names.
+                    face_names.append(name)
             process_this_frame = not process_this_frame
 
             # Display the results.
@@ -216,7 +217,7 @@ if __name__ == "__main__":
         os.chdir('../known_samples')
         print("current path: " + os.getcwd())
         _target = "Abubakr Osama"
-        _f = FaceId()
+        _f = FaceID()
         for _sample in os.listdir(_target):
             if _sample.upper() == '.DS_STORE':
                 pass
@@ -227,5 +228,5 @@ if __name__ == "__main__":
         print(f"Biometric Record:\n {_f.biometrics}")
 
 
-    f_ = FaceId()
+    f_ = FaceID()
     f_.batched_encode(None, 'Emma Watsona')
