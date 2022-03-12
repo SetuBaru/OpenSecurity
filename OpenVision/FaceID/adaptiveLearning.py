@@ -1,4 +1,4 @@
-from video_stream import FaceID as Fd
+from faceId import FaceID as Fd
 import os
 import json
 
