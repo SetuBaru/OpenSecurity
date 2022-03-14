@@ -1,6 +1,6 @@
 import RepoMan
 
 # Loading Module dependencies.
-repo = RepoMan.Module()
-x = repo.load(module_path='FaceID', modules=['adaptiveLearning', 'faceId'])
-print(x)
+loader = RepoMan.Module()
+loader.load()
+loader.load(_path='FaceID', modules=['adaptiveLearning', 'faceId'])

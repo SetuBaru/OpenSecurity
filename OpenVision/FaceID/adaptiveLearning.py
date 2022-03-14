@@ -36,12 +36,12 @@ class Memory:
         if record_ is None:
             record_ = self.record_
         if target_var is None:
-            target_var = self.temp
+            target_var = self.temp_
         # Create the record_ and open it for Writing.
-        with open(self.record_, "r") as d:
+        with open(record_, "r") as d:
             # Create InternalStateMachine
             print('Creating InternalStateMachine')
-            json.load({"Biometric Record": self.temp_}, d)
+            json.load(record_)
             # Alert user and close the record_
             print('Biometric Record created Successfully!')
             d.close()

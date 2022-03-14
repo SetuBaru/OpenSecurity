@@ -91,13 +91,12 @@ class FaceID:
     # sample_image indicated relative path to sample image.
     # sample_name indicates label or name assigned to that sample.
     def learn(self, sample_image, sample_name, prompt_on_id=False, attentive_learning=False):
-        # Load a sample picture and learn how to recognize it.
+        # Loads a sample picture and learn how to recognize it.
         _image = face_recognition.load_image_file(sample_image)
         _encoding = face_recognition.face_encodings(_image)[0]
-
-        # Checks if sample is part of the known_face_ids.
+        # Checks if the sample is part of known_face_ids.
         if sample_name not in self.known_face_ids or self.known_face_ids == 0:
-            # prompts user to make entry to known_face_ids and biometrics record_.
+            # prompts the user to make an entry to known_face_ids and biometric records.
             if prompt_on_id is True:
                 _r = input('New Sample Detected.\nConfirm Entry(Y/N):\t')
                 if _r.upper() == 'Y':
@@ -109,13 +108,11 @@ class FaceID:
                     _n = input('Please Re-enter sample name: ')
                     self.learn(sample_image, _n, True)
                     exit()
-            # Adds the sample_name to the biometric record_
+            # if prompts are turned off, then it adds the sample_name to the biometric record
             else:
                 self.known_face_ids.append(sample_name)
                 self.biometrics.setdefault(sample_name, []).append(_encoding)
-                print(f'{sample_name} and Biometric Data registered!')
-        else:
-            pass
+                print(f'{sample_name} registered in Biometric Database!')
 
         # If the _encoding is not part of the known_face_encodings
         if len(self.known_face_encodings) == 0 or _encoding not in np.array(self.known_face_encodings):
@@ -139,7 +136,7 @@ class FaceID:
                 pass
 
     # Defines a function to detect and identify Faces. Cross-References real-time data against a predefined Dataset.
-    def id(self):
+    def video_in_(self, _source=cv2.VideoCapture(0)):
         print('Detection Function Initialized....')
         # Initialize required variables.
         face_locations = []
@@ -147,24 +144,18 @@ class FaceID:
         face_names = []
         process_this_frame = True
         print('Assigning Video Capture Object....')
-        self.vid_capture = cv2.VideoCapture(0)
+        self.vid_capture = _source
         print('Video Capture Object Successfully set to 0.')
-
         # Initiates an open loop to control the videoCapture.
         while True:
-
             # Grab a single frame of video.
             ret, frame = self.vid_capture.read()
-
             # Resize frame of video to 1/4 size for faster face recognition processing.
             small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
-
             # Convert the _image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses).
             rgb_small_frame = small_frame[:, :, ::-1]
-
             # Only process every other frame of video to save time.
             if process_this_frame:
-
                 # Finds all the faces and face encodings in the current frame of video.
                 face_locations = face_recognition.face_locations(rgb_small_frame)
                 face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
@@ -181,7 +172,6 @@ class FaceID:
                     # Append name to list of face_names.
                     face_names.append(name)
             process_this_frame = not process_this_frame
-
             # Display the results.
             for (top, right, bottom, left), name in zip(face_locations, face_names):
                 # Scale back up face locations since the frame we detected in was scaled to 1/4 size.
@@ -189,23 +179,18 @@ class FaceID:
                 right *= 4
                 bottom *= 4
                 left *= 4
-
                 # Draw a box around the face.
                 cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
-
                 # Draw a label with a name below the face.
                 cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
                 font = cv2.FONT_HERSHEY_DUPLEX
                 cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
-
             # Display the resulting frames as cv2 Video preview.
             cv2.imshow('Video', frame)
-
             # Detects for the 'q' on keyboard to terminate VideoCapture!
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 print('Stopping Playback for CV2 Video Object...')
                 break
-
         # Release the VideoCapture Object and the cv2 windows.
         self.vid_capture.release()
         cv2.destroyAllWindows()
