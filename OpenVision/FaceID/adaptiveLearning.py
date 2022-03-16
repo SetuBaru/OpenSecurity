@@ -52,7 +52,7 @@ class Memory:
 
     # Function to load the BiometricRecord and the user_file into memory.
     def Load(self):
-        with open(self.biometric_path, "r") as d:
+        with open(self.biometric_path, "r+") as d:
             # Loading Biometric Object
             print('Updating Internal Biometric-data')
             data = json.load(d)
@@ -60,7 +60,7 @@ class Memory:
             self.biometric_object.update(data)
             print('Internal Biometric-data Updated Successfully!')
             d.close()
-        with open(self.userpath, "r") as d:
+        with open(self.userpath, "r+") as d:
             # Loading User Object
             print('Updating Internal User-Data')
             data = json.load(d)
@@ -73,21 +73,27 @@ class Memory:
     # Function to Save Current State.
     def Save(self):
         if self.biometric_object is not None:
-            with open(self.biometric_path, "w") as d:
+            with open(self.biometric_path, "r+") as _data:
                 # Create InternalStateMachine
+                json_select = json.load(_data)
+                for key, value in self.biometric_object.items():
+                    json_select.setdefault(key, []).append(value)
                 print('Updating Biometric Record...')
-                json.dump(self.biometric_object, d)
+                json.dump(json_select, _data)
                 # Alert user and close the record_
                 print('Biometric Record Updated Successfully!')
-                d.close()
+                _data.close()
         elif self.user_data is not None:
-            with open(self.userpath, "w") as d:
+            with open(self.userpath, "r+") as _data:
                 # Create InternalStateMachine
+                json_select = json.load(_data)
+                json_select.append(self.user_data)
+                json_select.seek(0)
                 print('Updating User File...')
-                json.dump(self.user_data, d)
+                json.dump(self.json_select, _data)
                 # Alert user and close the record_
                 print('User File Updated Successfully!')
-                d.close()
+                _data.close()
         else:
             print('Nothing to Save...')
         print("Records Updated Successfully!...")

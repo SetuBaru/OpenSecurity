@@ -36,12 +36,13 @@ def test5():
     fid.learn(target_image=f"{sample_path}/{target_name}/{target_image}",
               target_name="Seto Kayaba")
     fid.cram(sample_path=f"{sample_path}", target=target_name)
-    fid.capture_vid()
+    fid.onStream()
 
 
 def test6():
     from FaceID import adaptiveLearning
     ad = adaptiveLearning.Memory()
+    ad.biometric_object = {'Abubakr Osama': []}
     ad.Save()
 
 
@@ -72,8 +73,10 @@ if __name__ == "__main__":
     print('Start of test 5.....')
     test5()
     print('.....End of test 5\n')
-   """
+    
     # Adaptive Learning
     print('Start of test 6.....')
     test6()
     print('.....End of test 6\n')
+    
+    """

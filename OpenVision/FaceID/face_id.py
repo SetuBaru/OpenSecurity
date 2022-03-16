@@ -132,7 +132,7 @@ class FaceID:
         print("Learning process completed successfully!!...")
 
     # Defines a function to detect and identify Faces. Cross-References real-time data against a predefined Dataset.
-    def capture_vid(self, _source=cv2.VideoCapture(0)):
+    def onStream(self, _source=cv2.VideoCapture(0)):
         print('Detection Function Initialized....')
         # Initialize required variables.
         face_locations = []
@@ -156,7 +156,6 @@ class FaceID:
                 face_locations = face_recognition.face_locations(rgb_small_frame)
                 face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
                 face_names = []
-                self.known_face_ids
                 for face_encoding in face_encodings:
                     # See if the face is a match for the known face(s).
                     matches = face_recognition.compare_faces(self.known_face_encodings, face_encoding)
@@ -195,6 +194,9 @@ class FaceID:
         self.cap_device.release()
         cv2.destroyAllWindows()
         print('Operation Terminated.')
+
+    def onFile(self, _source=None, _target=None):
+        pass
 
 
 if __name__ == "__main__":
