@@ -90,7 +90,7 @@ class Memory:
                 json_select.append(self.user_data)
                 json_select.seek(0)
                 print('Updating User File...')
-                json.dump(self.json_select, _data)
+                json.dump(json_select, _data)
                 # Alert user and close the record_
                 print('User File Updated Successfully!')
                 _data.close()
