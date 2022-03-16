@@ -1,4 +1,4 @@
-import user_management as manage
+import ID_manager as manage
 import face_recognition
 import cv2
 import numpy as np

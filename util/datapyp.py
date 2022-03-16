@@ -18,13 +18,13 @@ class Datapyp:
         if target_path is None:
             target_path = self.data_path
         elif folder_ref is None:
-            folder_ref = random.randint(99999, 999999999)
-            if folder_ref in os.listdir():
+            folder_ref = random.randint(9999, 999999999)
+            while folder_ref in os.listdir():
                 folder_ref = random.randint(99999, 999999999)
-            else:
-                pass
+        else:
+            pass
         try:
-            embedding_path = os.path.join(target_path, folder_ref)
+            embedding_path = os.path.join(target_path, str(folder_ref))
             os.makedirs(embedding_path)
             print(f' {embedding_path} Created Successfully.....\n')
             self.embedding_path[f'{folder_ref}'] = embedding_path
@@ -38,7 +38,7 @@ class Datapyp:
             print(f'[EncounteredAnUnknownError]:\n{msg}')
         return True
 
-    def RelocateFiles(self, source_path=None, target_path=None):
+    def relocate_files(self, source_path=None, target_path=None):
         if source_path is None:
             print('Please Specify a path to move data from...\n')
             source_path = input('Source Path: ')
@@ -51,3 +51,4 @@ class Datapyp:
                 destination = target_path
                 shutil.copy(source, destination)
                 print(f'{file} moved successfully')
+
