@@ -1,51 +1,93 @@
-from faceId import FaceID as Fd
 import os
 import json
+from util import dataman
+
+dm = dataman.Manager()
 
 
 # Importing the FaceID object
 class Memory:
     # Constructor for the Memory Object.
     def __init__(self):
+        self.path = "../data/_cache_"
+        self.biometric_path = f"{self.path}/BiometricRecord.json"
+        self.biometric_object = {0: []}
+        self.user_data = {}
+        self.userpath = dm.user_path
         # Checks if data path exits, else terminated initialization function.
-        try:
-            print('Checking if Directory Path Exists...')
-            os.chdir(os.getcwd()[::-3] + '/' + 'data')
-        except Exception as DataPathNotFound:
-            print(f'DataPathError!... {DataPathNotFound}')
-            exit()
-        # specifies BiometricRecord file.
-        self.record_ = os.path.dirname('BiometricRecord.json')
-        # Defining object attributes and Initial state vars.
-        self.temp_ = [None, None, None]
-        # checks if the record_ exists in cwd.
-        if os.path.exists(self.record_):
-            print(f'{self.record_} located. Loading data!')
+        print(f"Checking if {self.biometric_path} Path Exists...")
+        if os.path.isfile(self.biometric_path):
+            print("Path Already Exists....")
         else:
+            print(f"{self.biometric_path} not found... Attempting to create the BiometricRecord...")
             # Create the record_ and open it for Writing.
-            with open(self.record_, "w") as d:
+            with open(self.biometric_path, "w") as d:
                 # Create InternalStateMachine
-                print('Creating InternalStateMachine')
-                json.dump({"Biometric Record": self.temp_}, d)
+                print('Creating Biometric Record...')
+                json.dump(self.biometric_object, d)
                 # Alert user and close the record_
                 print('Biometric Record created Successfully!')
                 d.close()
+        print(f"Checking if {self.userpath} Path Exists...")
+        if os.path.isfile(self.userpath):
+            print("Path Already Exists....")
+        else:
+            print(f"{self.userpath} not found...")
+            with open(self.userpath, "w") as d:
+                # Create InternalStateMachine
+                print('Creating User File...')
+                user0 = {  # Data to be written
+                    0:
+                        {
+                            "Full Name": "Abubakr Osama",
+                            "Contact_No": "+249905460054",
+                            "Email": "mrabubakrosama@gmail.com",
+                            "Current Address": "Khartoum, Sudan."
+                        }
+                }
+                json.dump(user0, d)
+                # Alert user and close the record_
+                print('User File created Successfully!')
+                d.close()
 
-    # Function to move the biometric_record into a target variable
-    def pull(self, record_=None, target_var=None):
-        if record_ is None:
-            record_ = self.record_
-        if target_var is None:
-            target_var = self.temp_
-        # Create the record_ and open it for Writing.
-        with open(record_, "r") as d:
-            # Create InternalStateMachine
-            print('Creating InternalStateMachine')
-            json.load(record_)
+    # Function to load the BiometricRecord and the user_file into memory.
+    def Load(self):
+        with open(self.biometric_path, "r") as d:
+            # Loading Biometric Object
+            print('Updating Internal Biometric-data')
+            data = json.load(d)
             # Alert user and close the record_
-            print('Biometric Record created Successfully!')
+            self.biometric_object.update(data)
+            print('Internal Biometric-data Updated Successfully!')
             d.close()
+        with open(self.userpath, "r") as d:
+            # Loading User Object
+            print('Updating Internal User-Data')
+            data = json.load(d)
+            # Alert user and close the record_
+            self.user_data.update(data)
+            print('Internal User-Data Updated Successfully!')
+            d.close()
+        print('UPDATES COMPLETED SUCCESSFULLY!')
 
     # Function to Save Current State.
-    def push(self, source_var, biometric_record):
-        pass
+    def Save(self):
+        if self.biometric_object is not None:
+            with open(self.biometric_path, "w") as d:
+                # Create InternalStateMachine
+                print('Updating Biometric Record...')
+                json.dump(self.biometric_object, d)
+                # Alert user and close the record_
+                print('Biometric Record Updated Successfully!')
+                d.close()
+        elif self.user_data is not None:
+            with open(self.userpath, "w") as d:
+                # Create InternalStateMachine
+                print('Updating User File...')
+                json.dump(self.user_data, d)
+                # Alert user and close the record_
+                print('User File Updated Successfully!')
+                d.close()
+        else:
+            print('Nothing to Save...')
+        print("Records Updated Successfully!...")

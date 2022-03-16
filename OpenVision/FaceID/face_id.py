@@ -1,11 +1,7 @@
-import ID_manager as manage
 import face_recognition
 import cv2
 import numpy as np
 import os
-
-# Load sample pictures and learn how to recognize them.
-manage = manage.ManagementConsole()
 
 
 class FaceID:
@@ -15,9 +11,57 @@ class FaceID:
         self.known_face_encodings = []
         self.known_face_ids = []
         self.biometrics = {}
-        self.vid_capture = None
-        self.sample_path = '//FaceID/FaceID/known_samples'
+        self.cap_device = None
+        self.sample_path = '../data/sample_images'
         self.counter1 = 0
+
+    # Function to Learn Features.
+    # sample_image indicated relative path to sample image.
+    # sample_name indicates label or name assigned to that sample.
+    def learn(self, target_image, target_name, prompt_on_id=False, attentive_learning=False):
+        # Loads a sample picture and learn how to recognize it.
+        _image = face_recognition.load_image_file(target_image)
+        _encoding = face_recognition.face_encodings(_image)[0]
+        # Checks if the sample is part of known_face_ids.
+        if target_name not in self.known_face_ids or self.known_face_ids == 0:
+            # prompts the user to make an entry to known_face_ids and biometric records.
+            if prompt_on_id is True:
+                _r = input('New Sample Detected.\nConfirm Entry(Y/N):\t')
+                if _r.upper() == 'Y':
+                    self.known_face_ids.append(target_name)
+                    self.biometrics.setdefault(target_name, []).append(_encoding)
+                    print(f'{target_name} Biometric Data registered!')
+                # allows the user to make another entry
+                else:
+                    _n = input('Please Re-enter sample name: ')
+                    self.learn(target_image, _n, True)
+                    exit()
+            # if prompts are turned off, then it adds the sample_name to the biometric record
+            else:
+                self.known_face_ids.append(target_name)
+                self.biometrics.setdefault(target_name, []).append(_encoding)
+                print(f'{target_name} registered in Biometric Database!')
+
+        # If the _encoding is not part of the known_face_encodings
+        if len(self.known_face_encodings) == 0 or _encoding not in np.array(self.known_face_encodings):
+            # appends it to known_face_encodings and adds it to the biometric record_.
+            self.counter1 = self.counter1 + 1
+            print(f'Indexing: ({self.counter1})')
+            self.known_face_encodings.append(_encoding)
+            self.biometrics.setdefault(target_name, []).append(_encoding)
+        # Else if it is part of the known_face_encodings gives the user the option to locate it.
+        else:
+            print('Biometric Data already exists...\n')
+            if attentive_learning is True:
+                _r = input('Locate Associated ID?\n[Y/N]: ')
+                if _r.upper() == 'Y':
+                    # Lists the Biometrics key associated with a given _encoding
+                    match_result = list(self.biometrics.keys())[list(self.biometrics.values()).index(_encoding)]
+                    print('Source Located >> ' + match_result)
+                else:
+                    print('Action Aborted..')
+            else:
+                pass
 
     # batched_learning function.
     # target_path stores relative path to samples
@@ -87,56 +131,8 @@ class FaceID:
                         print(f'{_image} skipped...')
         print("Learning process completed successfully!!...")
 
-    # Function to Learn Features.
-    # sample_image indicated relative path to sample image.
-    # sample_name indicates label or name assigned to that sample.
-    def learn(self, sample_image, sample_name, prompt_on_id=False, attentive_learning=False):
-        # Loads a sample picture and learn how to recognize it.
-        _image = face_recognition.load_image_file(sample_image)
-        _encoding = face_recognition.face_encodings(_image)[0]
-        # Checks if the sample is part of known_face_ids.
-        if sample_name not in self.known_face_ids or self.known_face_ids == 0:
-            # prompts the user to make an entry to known_face_ids and biometric records.
-            if prompt_on_id is True:
-                _r = input('New Sample Detected.\nConfirm Entry(Y/N):\t')
-                if _r.upper() == 'Y':
-                    self.known_face_ids.append(sample_name)
-                    self.biometrics.setdefault(sample_name, []).append(_encoding)
-                    print(f'{sample_name} Biometric Data registered!')
-                # allows the user to make another entry
-                else:
-                    _n = input('Please Re-enter sample name: ')
-                    self.learn(sample_image, _n, True)
-                    exit()
-            # if prompts are turned off, then it adds the sample_name to the biometric record
-            else:
-                self.known_face_ids.append(sample_name)
-                self.biometrics.setdefault(sample_name, []).append(_encoding)
-                print(f'{sample_name} registered in Biometric Database!')
-
-        # If the _encoding is not part of the known_face_encodings
-        if len(self.known_face_encodings) == 0 or _encoding not in np.array(self.known_face_encodings):
-            # appends it to known_face_encodings and adds it to the biometric record_.
-            self.counter1 = self.counter1 + 1
-            print(f'Indexing: ({self.counter1})')
-            self.known_face_encodings.append(_encoding)
-            self.biometrics.setdefault(sample_name, []).append(_encoding)
-        # Else if it is part of the known_face_encodings gives the user the option to locate it.
-        else:
-            print('Biometric Data already exists...\n')
-            if attentive_learning is True:
-                _r = input('Locate Associated ID?\n[Y/N]: ')
-                if _r.upper() == 'Y':
-                    # Lists the Biometrics key associated with a given _encoding
-                    match_result = list(self.biometrics.keys())[list(self.biometrics.values()).index(_encoding)]
-                    print('Source Located >> ' + match_result)
-                else:
-                    print('Action Aborted..')
-            else:
-                pass
-
     # Defines a function to detect and identify Faces. Cross-References real-time data against a predefined Dataset.
-    def video_in_(self, _source=cv2.VideoCapture(0)):
+    def capture_vid(self, _source=cv2.VideoCapture(0)):
         print('Detection Function Initialized....')
         # Initialize required variables.
         face_locations = []
@@ -144,12 +140,12 @@ class FaceID:
         face_names = []
         process_this_frame = True
         print('Assigning Video Capture Object....')
-        self.vid_capture = _source
+        self.cap_device = _source
         print('Video Capture Object Successfully set to 0.')
         # Initiates an open loop to control the videoCapture.
         while True:
             # Grab a single frame of video.
-            ret, frame = self.vid_capture.read()
+            ret, frame = self.cap_device.read()
             # Resize frame of video to 1/4 size for faster face recognition processing.
             small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
             # Convert the _image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses).
@@ -160,6 +156,7 @@ class FaceID:
                 face_locations = face_recognition.face_locations(rgb_small_frame)
                 face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
                 face_names = []
+                self.known_face_ids
                 for face_encoding in face_encodings:
                     # See if the face is a match for the known face(s).
                     matches = face_recognition.compare_faces(self.known_face_encodings, face_encoding)
@@ -168,7 +165,10 @@ class FaceID:
                     face_distances = face_recognition.face_distance(self.known_face_encodings, face_encoding)
                     best_match_index = np.argmin(face_distances)
                     if matches[best_match_index]:
-                        name = self.known_face_ids[best_match_index]
+                        try:
+                            name = self.known_face_ids[best_match_index]
+                        except IndexError:
+                            pass
                     # Append name to list of face_names.
                     face_names.append(name)
             process_this_frame = not process_this_frame
@@ -192,7 +192,7 @@ class FaceID:
                 print('Stopping Playback for CV2 Video Object...')
                 break
         # Release the VideoCapture Object and the cv2 windows.
-        self.vid_capture.release()
+        self.cap_device.release()
         cv2.destroyAllWindows()
         print('Operation Terminated.')
 
