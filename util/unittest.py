@@ -7,7 +7,7 @@ def test1():
 
 
 def test2():
-    import LogTool
+    import LoggingTool
     _ = logging_tool
     return True
 

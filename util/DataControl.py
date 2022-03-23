@@ -1,7 +1,7 @@
 import shutil
 import os
 import random
-import Handler
+from Handler import Handler
 
 handler = Handler()
 
@@ -57,11 +57,10 @@ class DataControl:
             print(f'Confirm choices? \ntarget path = {t_p}\t dirs = {_dirs}')
             self.set_path(target_path=t_p, _dirs=_dirs)
             print('Custom State has been created Successfully!')
-            test = Handler.handle(Object=self.save_state(), LogResults=True)
+            test = Handler.handle(_object=self.save_state(), log_result=True)
             if test is True:
-                self.save_State()
+                self.save_state()
             else:
-                print(f"'_StateSaveError' Occurred!\t{test}")
                 self.__init__(_state='custom')
             exit()
 
@@ -79,11 +78,10 @@ class DataControl:
             self.generated_encodings = []
             self.known_identities = []
             print(' Data Objects Created successfully!')
-            test = Handler.handle(Object=self.save_state(), LogResults=True)
+            test = Handler.handle(_object=self.save_state(), log_result=True)
             if test is True:
-                self.save_State()
+                self.save_state()
             else:
-                print(f"'_StateSaveError' Occurred!\t{test}")
                 self.__init__(_state='default')
             exit()
 
