@@ -1,8 +1,8 @@
 import os
 import json
-from util import dataman
+from util import JSON_DB
 
-dm = dataman.Manager()
+dm = dataman.db()
 
 
 # Importing the FaceID object
@@ -52,14 +52,14 @@ class Memory:
 
     # Function to load the BiometricRecord and the user_file into memory.
     def Load(self):
-        with open(self.biometric_path, "r+") as d:
+        with open(self.biometric_path, "r+") as _data:
             # Loading Biometric Object
             print('Updating Internal Biometric-data')
-            data = json.load(d)
+            data = json.load(_data)
             # Alert user and close the record_
             self.biometric_object.update(data)
             print('Internal Biometric-data Updated Successfully!')
-            d.close()
+            _data.close()
         with open(self.userpath, "r+") as d:
             # Loading User Object
             print('Updating Internal User-Data')

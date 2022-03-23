@@ -1,0 +1,3 @@
+import DataControl
+
+d = DataControl()

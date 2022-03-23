@@ -3,8 +3,9 @@ import os
 import random
 
 
-class Manager:
-
+class dB:
+    # db Object Initialization Function.
+    # sets important work paths.
     def __init__(self):
         self.current_path = os.getcwd()
         self.data_path = '../data/_cache_'
@@ -12,7 +13,9 @@ class Manager:
         self.user_path = f'{self.data_path}/user_file.json'
         print(f'Set data_path = {self.data_path}, log_path= {self.log_path}, user_path= {self.user_path}.')
 
+    # Function to add data to the user_file
     def append(self, _target=None, _number=None, _email=None, _address=None):
+        # Get all relevant information.
         if _target is None:
             _target = input("Enter the target's Full Name: ")
         elif _number is None:
@@ -24,11 +27,14 @@ class Manager:
         else:
             pass
         _target, _number, _email, _address = str(_target), str(_number), str(_email), str(_address)
+        # Try to
+        # Generate an ID randomly new entries.
         try:
             print('Generating User ID...')
             new_id = random.randint(0, 9999999999999999999999999)
             id_gen_count = 0
             print('Checking Availability...')
+            # Conduct a search to determine if the ID is in the user_file
             if self.query() != {}:
                 print(f"{self.user_path} is empty!....")
                 while self.query(id_no=new_id) is not False:
@@ -38,13 +44,13 @@ class Manager:
                         return False
                     else:
                         id_gen_count = id_gen_count + 1
-            else:
-                pass
+            # The ID is assigned to a variable.
             id_no = new_id
+            # Error Handling.
         except Exception as ReadError:
             print(f"'READERROR' encountered! {ReadError}")
             return False
-
+        # Draft up the entry utilising dictionary properties.
         user_info = {  # Data to be written
             id_no:
                 {
@@ -54,6 +60,9 @@ class Manager:
                     "Current Address": _address
                 }
         }
+
+        # Trying to write the user_info dictionaries to a text file and handling
+        # resultant errors.
         try:
             user_path = self.user_path
             json_object = json.dumps(user_info, indent=4)  # Serializing json

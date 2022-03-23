@@ -1,13 +1,13 @@
 def test1():
-    import datapyp
-    test_obj1 = datapyp.Datapyp()
+    import DataControl
+    test_obj1 = datapyp.DataControl()
     test_obj1.build_path('../data/unit_tests/_cache_')
     test_obj1.relocate_files('unit_tests', 'data/_cache_')
     return True
 
 
 def test2():
-    import logging_tool
+    import LogTool
     _ = logging_tool
     return True
 
@@ -20,8 +20,8 @@ def test3():
 
 
 def test4():
-    import dataman
-    id_man = dataman.Manager()
+    import JSON_DB
+    id_man = dataman.db()
     id_man.append(_target="unittest", _number="N/A", _email="N/A", _address="Retro's Computer")
     id_man.query(_target="unittest")
     id_man.remove(0)
@@ -49,7 +49,7 @@ def test6():
 # Running Unit Testing.
 if __name__ == "__main__":
     """ #Half-Full
-    # Datapyp 
+    # DataControl 
     print("Start of test 1.....")
     test1()
     print(".....End of test 1\n")
@@ -69,10 +69,6 @@ if __name__ == "__main__":
     test4()
     print(".....End of test 4\n")
     
-    # face_id [Incomplete]
-    print('Start of test 5.....')
-    test5()
-    print('.....End of test 5\n')
     
     # Adaptive Learning
     print('Start of test 6.....')
@@ -80,3 +76,8 @@ if __name__ == "__main__":
     print('.....End of test 6\n')
     
     """
+
+    # face_id [Incomplete]
+    print('Start of test 5.....')
+    test5()
+    print('.....End of test 5\n')
