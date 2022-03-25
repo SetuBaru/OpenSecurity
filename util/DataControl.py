@@ -11,32 +11,36 @@ class DataControl:
 
     # Initialization Function to prepare the Data Control venv
     def __init__(self, _state=None):
+        # Default Mode for initialization
         if _state is None:
             print('DataControl Object Initialized Successfully!')
             print('Looking for Previous States....')
-            # Checks for an old state save.
+            # Checks for an old state's saved data.
             if self.load_state():
                 print('Load State Found. Load Presets?')
                 self.last_state = self.load_state()
-                # Option to Load
+                # gives user an option to load the previous state
                 x = input("Type 'l' to Load previous state or 'n' to create a new state: ")
+                # if user decided to load state then init will be called again with the load_state() function as _state.
                 if x.lower() == 'l':
-                    # Loading last state
-                    self.__init__(_state=self.last_state)
+                    self.__init__(_state=self.load_state())
                 elif x.lower() == 'n':
-                    print('Proceed with Default Settings or choose a custom setup?')
+                    print('You have chosen not to load the previous state and instead create a new state!..'
+                          'Proceed with Default Settings or choose a custom setup?')
+                    # allows the user to choose between a default mode or a custom data environment setup.
                     _x = input("Type 'd' for 'Default' and 'c' for 'Custom' setup: ")
-                    # Mechanism to allow flexibility for multi- use cases.
                     if _x.lower() == 'd':
                         self.__init__(_state='default')
                     elif _x.lower() == 'c':
                         self.__init__(_state='custom')
+                    # Goes back to default condition with _state still at None
                     else:
                         print(f'{_x} is an invalid response... please try again...')
                         self.__init__()
                 else:
                     print(f"Invalid response'{x}'! please make a valid entry and retry!")
                     self.__init__()
+            # If no state is found, prompts user to create a state that's either custom or default.
             else:
                 print('No Load State found...')
                 print('Proceed with Default Settings or choose a custom setup?')
@@ -49,22 +53,30 @@ class DataControl:
                 else:
                     print(f'{x} is an invalid response... please try again...')
                     self.__init__()
+            # Exits the function
             exit()
 
+        # checks if the current _state is set to custom
         elif _state == 'custom':
+            # receives user input
             t_p = input("Enter a target path to use. To use current path you can also type 'default': ")
             _dirs = input("Enter the directories you'll be working with Separated by Commas(eg: work, data, docs): ")
             print(f'Confirm choices? \ntarget path = {t_p}\t dirs = {_dirs}')
+            # feeds the user input into the set_path method to prepare the Data VenV
             self.set_path(target_path=t_p, _dirs=_dirs)
             print('Custom State has been created Successfully!')
-            test = Handler.handle(_object=self.save_state(), log_result=True)
+            # Attempts to save the current State using the save_state function.
+            test = Handler.handle(_object='self.save_state()', log_result=True)
             if test is True:
                 self.save_state()
             else:
                 self.__init__(_state='custom')
+            # Exits the function
             exit()
 
+        # Checks if the current _State is set to default
         elif _state == 'default':
+            # Sets pre-defined path defaults
             self.work_path = os.getcwd()
             self.data_path = f'{self.work_path}/data'
             self.cache_path = f'{self.data_path}/_cache_'
@@ -73,16 +85,18 @@ class DataControl:
             self.sample_path = f'{self.data_path}/samples'
             self.labelled_image_path = f'{self.data_path}'
             print("Data Paths set successfully!")
-            # Setting Up data Objects
+            # Sets Up data Objects
             self.embedding_path = {}  # Create a log to store paths
             self.generated_encodings = []
             self.known_identities = []
             print(' Data Objects Created successfully!')
-            test = Handler.handle(_object=self.save_state(), log_result=True)
+            # Attempts to save the current state. (Attempts because handler.handle sandboxes the func catch errors!)
+            test = Handler.handle(_object='self.save_state()', log_result=True)
             if test is True:
                 self.save_state()
             else:
                 self.__init__(_state='default')
+            # Exits the function
             exit()
 
     def set_path(self, target_path=None, _dirs=None):
