@@ -59,7 +59,7 @@ class DataControl:
         # checks if the current _state is set to custom
         elif _state == 'custom':
             # receives user input
-            t_p = input("Enter a target path to use. To use current path you can also type 'default': ")
+            t_p = input("Enter a target path to use: ")
             _dirs = input("Enter the directories you'll be working with Separated by Commas(eg: work, data, docs): ")
             print(f'Confirm choices? \ntarget path = {t_p}\t dirs = {_dirs}')
             # feeds the user input into the set_path method to prepare the Data VenV
@@ -70,6 +70,7 @@ class DataControl:
             if test is True:
                 self.save_state()
             else:
+                print('Failed to Save Custom State....')
                 self.__init__(_state='custom')
             # Exits the function
             exit()
@@ -95,10 +96,12 @@ class DataControl:
             if test is True:
                 self.save_state()
             else:
+                print('Failed to Save State. Try Again...')
                 self.__init__(_state='default')
             # Exits the function
             exit()
 
+    # Function to set the path methods.
     def set_path(self, target_path=None, _dirs=None):
         if target_path.lower() == 'default':
             target_path = os.getcwd()
@@ -180,4 +183,4 @@ class DataControl:
         return True
 
     def save_state(self):
-        pass
+        self.build_path()
